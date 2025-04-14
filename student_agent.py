@@ -26,12 +26,16 @@ TEXT_COLOR = {
 }
 
 class Game2048Env(gym.Env):
-    def __init__(self):
+    def __init__(self, board = None, score = None):
         super(Game2048Env, self).__init__()
 
         self.size = 4  # 4x4 2048 board
         self.board = np.zeros((self.size, self.size), dtype=int)
+        if board is not None:
+            self.board = board
         self.score = 0
+        if score is not None:
+            self.score = score
 
         # Action space: 0: up, 1: down, 2: left, 3: right
         self.action_space = spaces.Discrete(4)
@@ -464,7 +468,7 @@ patterns = [
 approximator = NTupleApproximator(board_size=4, patterns=patterns, trained_weights_path = "TD-weights_30000.json")
 
 def get_action(state, score):
-    env = Game2048Env()
+    env = Game2048Env(board=state,score=score)
     action = select_action(env, approximator, 0)
     return action
     # You can submit this random agent to evaluate the performance of a purely random strategy.
