@@ -28,7 +28,7 @@ jobs:
         pip install gym
         pip install -r requirements.txt
 
-        gdown 'https://drive.google.com/uc?id=1zMHfQoHErRou9O0gkLoQXt0XLDu34O0D&export=download'
+        gdown 'https://drive.google.com/uc?id=1avY9FRKlIz-CzkA3E7tWTugbcZV9B-Ch&export=download'
 
 
     - name: 3. Ensure env.so is executable
