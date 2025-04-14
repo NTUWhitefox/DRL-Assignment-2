@@ -10,6 +10,7 @@ import random
 import math
 from collections import defaultdict
 import time
+import json
 
 
 COLOR_MAP = {
@@ -247,6 +248,17 @@ class Game2048Env(gym.Env):
 
         # If the simulated board is different from the current board, the move is legal
         return not np.array_equal(self.board, temp_board)
+    
+
+def load_weights(approx, path):
+    with open(path, "r") as f:
+        raw = json.load(f)
+    weights = [
+        defaultdict(float, {tuple(map(int, k.split(","))): v for k, v in d.items()})
+        for d in raw
+    ]
+    approx.weights = weights
+
 def sysmetric_generator(pattern):
     #returna list 8(maybe less) symmetries of a pattern
     pass
@@ -297,6 +309,15 @@ def symmetric_generator(pattern):
             result.append(transformed)
     return result
 
+def load_weights(approx, path):
+    with open(path, "r") as f:
+        raw = json.load(f)
+    weights = [
+        defaultdict(float, {tuple(map(int, k.split(","))): v for k, v in d.items()})
+        for d in raw
+    ]
+    approx.weights = weights
+
 class NTupleApproximator:
     def __init__(self, board_size, patterns, trained_weights_path = None):
         """
@@ -308,10 +329,12 @@ class NTupleApproximator:
         # Create a weight dictionary for each pattern (shared within a pattern group)
         self.weights = [defaultdict(float) for _ in patterns]
         if trained_weights_path is not None:
-            with open(trained_weights_path, "rb") as f:
-                loaded_weights = pickle.load(f)
-            for i, pattern in enumerate(patterns):
-                self.weights[i] = loaded_weights[i]
+            load_weights(self, trained_weights_path)
+            print("loaded")
+        #    with open(trained_weights_path, "rb") as f:
+        #        loaded_weights = pickle.load(f)
+        #    for i, pattern in enumerate(patterns):
+        #        self.weights[i] = loaded_weights[i]
             
         # Generate symmetrical transformations for each pattern
         self.symmetry_patterns = [symmetric_generator(p) for p in patterns]
@@ -364,7 +387,6 @@ def simulate_and_evaluate(env, approximator, action):
     """Simulates taking an action in a copied environment and evaluates the resulting board state."""
     env_copy = copy.deepcopy(env)
     next_state, new_score, _, _, state_before_spawn, score_before_move = env_copy.step(action)
-
     reward = new_score - score_before_move
     return reward + approximator.value(state_before_spawn)
 
@@ -439,8 +461,7 @@ patterns = [
     ((0, 0), (0, 1), (1, 1), (2, 0), (2, 1), (3, 1))
 ]
 
-approximator = NTupleApproximator(board_size=4, patterns=patterns, trained_weights_path = "TD-weights_30000.pkl")
-
+approximator = NTupleApproximator(board_size=4, patterns=patterns, trained_weights_path = "TD-weights_30000.json")
 
 def get_action(state, score):
     env = Game2048Env()
