@@ -344,8 +344,8 @@ class NTupleApproximator:
             
         # Generate symmetrical transformations for each pattern
         self.symmetry_patterns = [symmetric_generator(p) for p in patterns]
-        for i, p_list in enumerate(self.symmetry_patterns):
-            print(p_list)
+        #for i, p_list in enumerate(self.symmetry_patterns):
+        #    print(p_list)
 
         self.tile_index_map = [0 for _ in range(32768 * 4)]
         for i in range(1, 16):
@@ -422,7 +422,7 @@ def get_action(state, score):
     action = select_action(env, approximator, 0)
 
 
-    
+
     return action
 
 
