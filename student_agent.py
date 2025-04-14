@@ -420,6 +420,9 @@ def get_action(state, score):
     env.board = copy.deepcopy(state)
     env.score = score
     action = select_action(env, approximator, 0)
+
+
+    
     return action
 
 
