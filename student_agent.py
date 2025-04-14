@@ -420,8 +420,6 @@ def get_action(state, score):
     env.board = copy.deepcopy(state)
     env.score = score
     action = select_action(env, approximator, 0)
-    
     return action
-    # You can submit this random agent to evaluate the performance of a purely random strategy.
 
 
